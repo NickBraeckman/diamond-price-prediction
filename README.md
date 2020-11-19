@@ -7,6 +7,7 @@ Predict the price of a diamond, based based on the physical characteristics.
 ## Dataset
 
 Dataset is avaible on: [diamond-dataset](https://www.kaggle.com/shivam2503/diamonds)
+
 Per diamond in dataset:
 
 * **price** price in US dollars (326--18,823)
