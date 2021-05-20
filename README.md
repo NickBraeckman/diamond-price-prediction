@@ -1,4 +1,4 @@
-# Diamond-Price-Prediction
+# Diamond Price Prediction
 
 ## Problem Definition
 
