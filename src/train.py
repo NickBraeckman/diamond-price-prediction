@@ -31,18 +31,23 @@ data['price_per_carat'] = data.price / data.carat
 y = data.price_per_carat
 X = data.drop(['price_per_carat', 'price', 'carat'], axis=1)
 
-X_tr_va, X_test, y_tr_va, y_test = train_test_split(
+X_train, X_test, y_train, y_test = train_test_split(
     X, 
     y,
     test_size=0.15,
     random_state=rnd_state
 )
-X_train, X_valid, y_train, y_valid = train_test_split(
+
+"""X_train, X_valid, y_train, y_valid = train_test_split(
     X_tr_va,
     y_tr_va,
     test_size=0.15,
     random_state=rnd_state
-)
+)"""
+
+print('train_size:', len(X_train.to_numpy()))
+print('test_size:', len(X_test.to_numpy()))
+#print('validation_size:', len(X_valid.to_numpy()))
 
 ordinal_encoder = make_column_transformer(
     (
@@ -54,9 +59,24 @@ ordinal_encoder = make_column_transformer(
 
 estimators = []
 
-estimators.append(dict(name='LR', estimator=LinearRegression(), param_grid={}))
-estimators.append(dict(name='RF', estimator=RandomForestRegressor(random_state=rnd_state), param_grid={'estimator__n_estimators': [100, 500, 800]}))
-estimators.append(dict(name='GB', estimator=GradientBoostingRegressor(random_state=rnd_state), param_grid={'estimator__n_estimators': [100, 500, 800], 'estimator__learning_rate': [0.01, 0.05, 0.1]}))
+estimators.append(dict(
+    name='LR', 
+    estimator=LinearRegression(), 
+    param_grid={}
+))
+estimators.append(dict(
+    name='RF', 
+    estimator=RandomForestRegressor(random_state=rnd_state), 
+    param_grid={'estimator__n_estimators': [100, 500, 800]}
+))
+estimators.append(dict(
+    name='GB', 
+    estimator=GradientBoostingRegressor(random_state=rnd_state), 
+    param_grid={
+        'estimator__n_estimators': [100, 500, 800], 
+        'estimator__learning_rate': [0.01, 0.05, 0.1]
+    }
+))
 
 # Model training
 for est in estimators:
@@ -66,7 +86,7 @@ for est in estimators:
         ('estimator', est['estimator'])
     ])
 
-    clf = GridSearchCV(pipe, est['param_grid'], scoring='neg_mean_squared_error')
+    clf = GridSearchCV(pipe, est['param_grid'], scoring='neg_mean_squared_error', n_jobs=-1)
     clf.fit(X_train, y_train)
     print('Best parmaters: ', clf.best_params_)
 
